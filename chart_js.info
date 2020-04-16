@@ -1,0 +1,5 @@
+name = Chart JS
+description = Integrates Chart JS library.
+package = Display
+core = 7.x
+

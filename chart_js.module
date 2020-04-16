@@ -1,0 +1,143 @@
+<?php
+
+/**
+ * @file
+ * Main module file.
+ */
+define('CHART_JS_LIB_PATH', 'sites/all/libraries/chart_js');
+define('CHART_JS_SITE', 'https://www.chartjs.org');
+
+
+
+/**
+ * Implements hook_permission().
+ */
+function chart_js_permission() {
+  return array(
+    'access chart_js example' => array(
+      'title' => t('Access charts example page'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_theme().
+ */
+function chart_js_theme() {
+  return array(
+    'chart_js' => array(
+      'variables' => array(
+        'title' => 'Chart JS Graph',
+        'chart_type' => 'bar',
+        'data' => array(),
+        'settings' => array(),
+        'classes' => array(),
+        'wrapper_class' => '',
+        'element_prefix' => '',
+        'element_suffix' => '',
+        'html' => FALSE,
+      ),
+      'file' => 'chart_js.theme.inc',
+    ),
+  );
+}
+
+/**
+ * Implements hook_menu().
+ */
+function chart_js_menu() {
+  return array(
+    'chart_js/example' => array(
+      'title' => 'chart_js examples',
+      'access arguments' => array('access chart_js example'),
+      'page callback' => 'chart_js_example_page',
+    ),
+  );
+}
+
+/**
+ * Implements hook_library().
+ */
+function chart_js_library() {
+  $libraries = array();
+
+
+  $js_path = CHART_JS_LIB_PATH . '/Chart.min.js';
+  $version = chart_js_get_version($js_path);
+
+  $libraries['chart_js'] = array(
+    'title' => 'chart_js',
+    'website' => CHART_JS_SITE,
+    'version' => $version,
+    'js' => array(
+      $js_path => array(),
+    ),
+    'css' => array(
+      CHART_JS_LIB_PATH . '/Chart.min.css' => array(),
+    ),
+  );
+  return $libraries;
+}
+
+/**
+ * Implements hook_libraries_info().
+ */
+function chart_js_libraries_info() {
+  $js_path = CHART_JS_LIB_PATH . '/Chart.min.js';
+  $libraries['chart_js'] = array(
+    'name' => 'chart_js',
+    'vendor url' => CHART_JS_SITE,
+    'download url' => 'https://github.com/chartjs/Chart.js/releases/download/v2.9.3/Chart.js.zip',
+    'version' => chart_js_get_version($js_path),
+    'files' => array(
+      'js' => array(
+        $js_path => array(),
+      ),
+      'css' => array(
+        CHART_JS_LIB_PATH . '/Chart.min.css' => array(),
+      ),
+    ),
+  );
+  return $libraries;
+}
+
+
+
+/**
+ * Get chart_js library version.
+ */
+function chart_js_get_version($js_path) {
+  $version = 0;
+  if (file_exists($js_path)) {
+    $fp = fopen($js_path, 'r');
+    $first_line = fgets($fp);
+    $second_line = fgets($fp);
+    if ($first_line) {
+      if (preg_match('/Chart.js (.*)/m', $second_line, $matches)) {
+        $version = $matches[1];
+      }
+    }
+  }
+  return $version;
+}
+
+function chart_js_example_page(){
+  $content = 'Hello';
+  $grafico1 = array(
+    'title' => t('Graph 1'),
+    'chart_type' => 'bar',
+    'labels' => ["Africa", "Asia", "Europe", "Latin America", "North America"],
+    'data' =>[
+      'label' => 'Persone per milione',
+      'datasets' => [
+          1 => ['label' => 'continenti',  'data' => [2,5,6,7], 'backgroundColor' => ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850"]],
+          2 => ['label' => 'continenti',  'data' => [3,56,8,8], 'backgroundColor' => ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850"]]
+          ],
+      ]
+
+  );
+
+  $content .= theme('chart_js', $grafico1);
+  //$content .= theme('chart_js', $grafico1);
+  return $content;
+}

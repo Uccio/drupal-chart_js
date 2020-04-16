@@ -1,0 +1,32 @@
+<?php
+
+/**
+ * @file
+ * Installation file for Chart JS module.
+ */
+
+/**
+ * Implements hook_requirements().
+ */
+function chart_js_requirements($phase) {
+  $t = get_t();
+  $requirements = array();
+
+  if ($phase == 'runtime') {
+    $requirements['chart_js']['title'] = $t('Chart_js');
+    $library = drupal_get_library('chart_js', 'chart_js');
+    if (!empty($library['version'])) {
+      $requirements['chart_js']['value'] = $library['version'];
+      $requirements['chart_js']['severity'] = REQUIREMENT_OK;
+    }
+    else {
+      $requirements['chart_js']['value'] = $t('Not found');
+      $requirements['chart_js']['description'] = $t('chart js library is missing. Please !download and place files Chart.min.css and Chart.min.js in the %directory directory.', array(
+        '!download' => l($t('download Chart JS library'), 'https://github.com/chartjs/Chart.js/releases/download/v2.9.3/Chart.js.zip'),
+        '%directory' => '/sites/all/libraries/chart_js',
+      ));
+      $requirements['chart_js']['severity'] = REQUIREMENT_ERROR;
+    }
+  }
+  return $requirements;
+}

@@ -19,7 +19,7 @@ function theme_chart_js(&$vars) {
 
   $g = (object) $vars;
   // Sanitize data if html is not set to TRUE.
-
+  $g->options = (object) $g->options;
 
   $d_labels= json_encode($vars['labels']);
   $d_dataset = '';
@@ -37,7 +37,8 @@ function theme_chart_js(&$vars) {
       ]
     },
     options: {
-      legend: { display: false },
+      responsive: {$g->options->responsive},
+      legend: { display: {$g->options->legend} },
       title: {
         display: true,
         text: '$g->title'
@@ -47,9 +48,7 @@ function theme_chart_js(&$vars) {
 
 , array('type' => 'inline', 'scope' => JS_DEFAULT));
 
-
-
-  $html = "<canvas id=\"$chart_id\" width=\"800\" height=\"450\"></canvas>";
+  $html = "<canvas id=\"$chart_id\" width=\"$g->width\" height=\"$g->height\"></canvas>";
 
   return $html;
 

@@ -20,7 +20,8 @@ function theme_chart_js(&$vars) {
   $g = (object) $vars;
   // Sanitize data if html is not set to TRUE.
   $g->options = (object) $g->options;
-
+  $responsive = $g->options->responsive ? 'true' : 'false' ;
+  $legend = $g->options->legend ? 'true' : 'false';
   $d_labels= json_encode($vars['labels']);
   $d_dataset = '';
   foreach ($vars['data']['datasets'] as $k => $v){
@@ -37,8 +38,8 @@ function theme_chart_js(&$vars) {
       ]
     },
     options: {
-      responsive: {$g->options->responsive},
-      legend: { display: {$g->options->legend} },
+      responsive: {$responsive},
+      legend: { display: {$legend} },
       title: {
         display: true,
         text: '$g->title'
